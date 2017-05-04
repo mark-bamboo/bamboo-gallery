@@ -1,0 +1,272 @@
+/************************************************************************************************************/
+
+@font-face {
+	font-family: 'Bamboo-Regular';
+	src: url('../fonts/Bamboo-Regular.eot?#iefix') format('embedded-opentype'),	url('../fonts/Bamboo-Regular.otf')	format('opentype'),
+		 url('../fonts/Bamboo-Regular.woff') format('woff'), url('../fonts/Bamboo-Regular.ttf')	format('truetype'), url('../fonts/Bamboo-Regular.svg#Bamboo-Regular') format('svg');
+	font-weight: normal;
+	font-style: normal;
+}
+
+/************************************************************************************************************/
+
+$padding: 		20px;
+$breakpoints: 	1440px 1366px 1280px 1024px 900px 768px 640px 480px 375px;
+$transitions:	0.25s ease-in-out;
+$zoom-scale:	1.05;
+
+$accent-color:	#00c257;
+
+$lightbox-background:	rgba(#000000,0.75);
+$button-color:	#ffffff;
+
+
+/* MIXINS ***************************************************************************************************/
+
+@mixin grid-layout( $cols ) {
+
+	@include grid-element( $cols );
+
+	@if $cols == 9 or $cols == 7 or $cols == 5 {
+		@media screen and (max-width: nth( $breakpoints, 5 ) ) {
+			@include grid-element(5);
+		}
+		@media screen and (max-width: nth( $breakpoints, 7 ) ) {
+			@include grid-element(3);
+		}
+		@media screen and (max-width: nth( $breakpoints, 8 ) ) {
+			@include grid-element(1);
+		}
+	}
+
+	@elseif $cols == 3 {
+		@media screen and (max-width: nth( $breakpoints, 5 ) ) {
+			@include grid-element(1);
+		}
+	}
+
+	@elseif $cols == 8 or $cols == 6 or $cols == 4 {
+		@media screen and (max-width: nth( $breakpoints, 5 ) ) {
+			@include grid-element(4);
+		}
+		@media screen and (max-width: nth( $breakpoints, 7) ) {
+			@include grid-element(2);
+		}
+		@media screen and (max-width: nth( $breakpoints, 8 ) ) {
+			@include grid-element(1);
+		}
+	}
+
+	@else { // $cols == 2 or $cols == 1
+		@media screen and (max-width: nth( $breakpoints, 5 ) ) {
+			@include grid-element(1);
+		}
+	}
+
+}
+
+@mixin grid-element( $cols ) {
+
+	float: left;
+	display: inline-block;
+	vertical-align: top;
+	margin-bottom: $padding !important;
+	width: calc( ( 99.99%	- ( #{$padding} * ( #{$cols} - 1) ) ) / #{$cols} ) !important;
+
+	&:not(:nth-child(#{$cols}n)) {
+		margin-right: $padding !important;
+		clear: none;
+	}
+
+	&:nth-child(#{$cols}n) {
+		margin-right: 0 !important;
+		clear:none;
+	}
+
+	&:nth-child(#{$cols}n+1) {
+		clear: left;
+	}
+
+	img {
+		max-width: 100%;
+		height: auto;
+		vertical-align: top;
+	}
+
+}
+
+/************************************************************************************************************/
+
+.bamboo-gallery {
+
+	@for $cols from 1 through 9 {
+		&.columns-#{$cols} .bamboo-gallery-button {
+			@include grid-layout( $cols );
+		}
+	}
+
+	.bamboo-gallery-button {
+
+		position: relative;
+		overflow: hidden;
+		cursor: pointer;
+
+		.bamboo-gallery-thumbnail {
+			width: 100%;
+			padding-top: 100%;
+			height: 0;
+			background-size: cover;
+			transition: $transitions;
+		}
+
+		.bamboo-gallery-overlay {
+			position: absolute;
+			top: 0;
+			left: 0;
+			right: 0;
+			bottom: 0;
+			opacity: 0;
+			transition: $transitions;
+			background: -moz-radial-gradient(top left, ellipse cover, rgba(255,255,255,.75) 0%, rgba($accent-color,.25) 100%);
+			background: -webkit-radial-gradient(top left, ellipse cover, rgba(255,255,255,.75) 0%,rgba($accent-color,.25) 100%);
+			background: radial-gradient(ellipse at top left, rgba(255,255,255,.75) 0%,rgba($accent-color,.25) 100%);
+		}
+
+		&:hover {
+			.bamboo-gallery-thumbnail {
+				-webkit-transform:scale($zoom-scale);
+				-moz-transform:scale($zoom-scale);
+				-ms-transform:scale($zoom-scale);
+				-o-transform:scale($zoom-scale);
+				 transform:scale($zoom-scale);
+			 }
+			.bamboo-gallery-overlay {
+				opacity: 1;
+			}
+		}
+
+	}
+
+}
+
+// Lightbox
+.bamboo-gallery-lightbox {
+
+	position: fixed;
+	top: 0;
+	left: 0;
+	bottom: 0;
+	right: 0;
+	z-index: -1;
+	overflow: hidden;
+	background: $lightbox-background;
+	opacity: 0;
+	transition: $transitions;
+
+	// Lightbox buttons
+	.bamboo-gallery-lightbox-close-button,
+	.bamboo-gallery-lightbox-prev-button,
+	.bamboo-gallery-lightbox-next-button {
+
+		position: absolute;
+		width: 40px;
+		height: 40px;
+		z-index: 1;
+		text-align: center;
+		line-height: 35px;
+		font-family: "Bamboo-Regular";
+		font-size: 30px;
+		font-weight: 100;
+		border-radius: 50%;
+		text-decoration: none;
+		cursor: pointer;
+		background: $button-color;
+		color: $lightbox-background;
+		transition: $transitions;
+
+		&:hover {
+			background: $accent-color;
+		}
+
+	}
+
+	.bamboo-gallery-lightbox-close-button {
+		top: 20px;
+		right: 20px;
+	}
+
+	.bamboo-gallery-lightbox-prev-button {
+		top: 50vh;
+		left: 20px;
+		text-align: left;
+		padding-left: 10px;
+	}
+
+	.bamboo-gallery-lightbox-next-button {
+		top: 50vh;
+		right: 20px;
+		text-align: right;
+		padding-right: 10px;
+	}
+
+	// Lightbox image
+	.bamboo-gallery-lightbox-image {
+		position: absolute;
+		top: 0;
+		left: 0;
+		bottom: 0;
+		right: 0;
+		background-position: center center;
+		background-size: contain;
+		background-repeat: no-repeat;
+		transition: $transitions;
+	}
+
+}
+
+.logged-in .bamboo-gallery-lightbox {
+
+	top: 32px;
+
+	@media screen and (max-width: 782px) {
+		top: 46px;
+	}
+
+}
+
+.bamboo-gallery-lightbox-loader {
+	position: absolute;
+	top: calc( 50vh - 50px);
+	left: calc( 50% - 50px);
+	width: 100px;
+	height: 100px;
+	animation: bamboo-gallery-rotate 1.4s infinite ease-in-out, bamboo-gallery-background 1.4s infinite ease-in-out alternate;
+	opacity: 0;
+	transition: opacity $transitions;
+}
+
+@keyframes bamboo-gallery-rotate {
+	0% {
+		transform: perspective(120px) rotateX(0deg) rotateY(0deg);
+	}
+	50% {
+		transform: perspective(120px) rotateX(-180deg) rotateY(0deg);
+	}
+	100% {
+		transform: perspective(120px) rotateX(-180deg) rotateY(-180deg);
+	}
+}
+
+@keyframes bamboo-gallery-background {
+	0% {
+		background-color: $accent-color;
+	}
+	50% {
+		background-color: lighten($accent-color, 50%);
+	}
+	100% {
+		background-color: darken($accent-color, 25%);
+	}
+}
+
+/**************************************************************************************************/
